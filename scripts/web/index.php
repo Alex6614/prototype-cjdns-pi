@@ -1,31 +1,52 @@
-<?php                                                                                                                                                                                                                                                                          
-$interface='mesh0';                                                                                                                                                                                                                                                            
-echo "<pre>";                                                                                                                                                                                                                                                                  
-$res="";                                                                                                                                                                                                                                                                       
-exec ( "iw $interface station dump",$res);                                                                                                                                                                                                                                     
-                                                                                                                                                                                                                                                                               
-foreach ($res as $line) {                                                                                                                                                                                                                                                      
-        $arr = explode(' ',trim($line),2);                                                                                                                                                                                                                                     
-        if ($arr[0]=='Station') {                                                                                                                                                                                                                                              
-                if (isset($mesh)) {                                                                                                                                                                                                                                            
-                        $nodes[]=$mesh;                                                                                                                                                                                                                                        
-                        unset($mesg);                                                                                                                                                                                                                                          
-                }                                                                                                                                                                                                                                                              
-                $mesh['mac']=$arr[1];                                                                                                                                                                                                                                          
-        } else {                                                                                                                                                                                                                                                               
-                $arr = explode(':',trim($line),2);                                                                                                                                                                                                                             
-                $mesh[$arr[0]]=$arr[1];                                                                                                                                                                                                                                        
-        }                                                                                                                                                                                                                                                                      
-                                                                                                                                                                                                                                                                               
-}                                                                                                                                                                                                                                                                              
-                        $nodes[]=$mesh;                                                                                                                                                                                                                                        
-                                                                                                                                                                                                                                                                               
-//print_r($nodes);                                                                                                                                                                                                                                                             
-//print_r($res);                                                                                                                                                                                                                                                               
-echo "<pre>";                                                                                                                                                                                                                                                                  
-?>                                                                                                                                                                                                                                                                             
-<h1>Nodes connected via <?=$interface?></h1>                                                                                                                                                                                                                                   
-<table border=1>                                                                                                                                                                                                                                                               
+<html>
+<head>
+
+<script type="text/javascript" src="vis.min.js"></script>
+    <link href="vis.min.css" rel="stylesheet" type="text/css" />
+<style type="text/css">
+        #mynetwork {
+            width: 600px;
+            height: 400px;
+            border: 1px solid lightgray;
+        }
+    </style>
+
+</head>
+<body>
+<?php                                                                                                                                                                                                                                        
+$interface='wlan1';                                                                                                                                                                                                                          
+echo "<pre>";                                                                                                                                                                                                                                
+$res="";                                                                                                                                                                                                                                     
+exec ( "iw $interface station dump",$res);                                                                                                                                                                                                   
+                                                                                                                                                                                                                                             
+foreach ($res as $line) {                                                                                                                                                                                                                    
+        $arr = explode(' ',trim($line),2);                                                                                                                                                                                                   
+        if ($arr[0]=='Station') {                                                                                                                                                                                                            
+                if (isset($mesh)) {                                                                                                                                                                                                          
+                        $nodes[]=$mesh;                                                                                                                                                                                                      
+                        unset($mesg);                                                                                                                                                                                                        
+                }
+$tmp=explode(' ',$arr[1],2);                                                                                                                                                                                                                 
+                $mesh['mac']=$tmp[0]; //$arr[1];                                                                                                                                                                                             
+        } else {                                                                                                                                                                                                                             
+                $arr = explode(':',trim($line),2);                                                                                                                                                                                           
+                $mesh[$arr[0]]=$arr[1];                                                                                                                                                                                                      
+        }                                                                                                                                                                                                                                    
+                                                                                                                                                                                                                                             
+}                                                                                                                                                                                                                                            
+                        $nodes[]=$mesh;                                                                                                                                                                                                      
+                                                                                                                                                                                                                                             
+//print_r($nodes);                                                                                                                                                                                                                           
+//print_r($res);                                                                                                                                                                                                                             
+
+
+
+
+
+echo "<pre>";                                                                                                                                                                                                                                
+?>                                                                                                                                                                                                                                           
+<h1>Nodes connected via <?=$interface?></h1>                                                                                                                                                                                                 
+<table border=1>                                                                                                                                                                                                                             
 <tr><td>Mac</td>
 <Td>Inactive Tiem</td>
 <td>RX Bytes</td>
@@ -46,11 +67,79 @@ foreach ($nodes as $node) {
 </tr>
 <?php } ?>
 </table>
+
+
+<div id="mynetwork"></div>
+
+<script type="text/javascript">
+    // create an array with nodes
+    var nodes = new vis.DataSet([
+<?php
+        $c=0;
+        foreach ($nodes as $node) {
+        $c++;
+?>
+{id:<?=$c?>, label: '<?=$node['mac']?>'},
+<?php
+}
+?>
+{id:0, label:'this'}
+    ]);
+
+    // create an array with edges
+    var edges = new vis.DataSet([
+
+<?php
+$c=0;
+foreach ($nodes as $node) {
+        $c++;
+        if ($c>1) echo ",";
+
+        $res=explode(' ',trim($node['signal avg']));
+        $dbm=$res[0];
+        $color='grey';
+//echo "//" . $dbm . "\n";
+if ($dbm>=-50) {
+$color='blue';
+
+} elseif ($dbm<=-70) {
+$color="red";
+
+} elseif ($dbm<=-60) {
+$color="yellow";
+
+} elseif ($dbm<=-50) {
+$color="green";
+
+}
+
+?>
+
+        {from: 0, to: <?=$c?>, color: '<?=$color?>', label: '<?=$dbm?>dBm' }
+<?php
+}
+?>
+    ]);
+
+    // create a network
+    var container = document.getElementById('mynetwork');
+
+    // provide the data in the vis format
+    var data = {
+        nodes: nodes,
+        edges: edges
+    };
+    var options = {};
+
+    // initialize your network!
+    var network = new vis.Network(container, data, options);
+</script>
+
 <?php
 $res="";
 
 exec("/opt/cjdns/tools/peerStats", $res);
- 
+
 
 
 unset($nodes);
@@ -97,4 +186,5 @@ foreach ($nodes as $node) {
 </tr>
 <?php } ?>
 </table>
-<?php
+</body>
+</html>

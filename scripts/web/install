@@ -5,3 +5,5 @@ sudo cp "$BASE_DIR/stats-http.nginx" /etc/nginx/sites-available/stats-http
 sudo ln -s /etc/nginx/sites-available/stats-http /etc/nginx/sites-enabled/stats-http
 sudo mkdir /var/www/stats
 sudo cp "$BASE_DIR/index.php" "/var/www/stats/index.php"
+sudo cp "$BASE_DIR/vis.min.js" "/var/www/stats/vis.min.js"
+sudo cp "$BASE_DIR/vis.min.css" "/var/www/stats/vis.min.css"
