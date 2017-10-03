@@ -1,0 +1,6 @@
+#!/bin/sh
+
+
+sudo rm -rf  /etc/nginx/sites-available/stats-http
+sudo rm -rf /etc/nginx/sites-available/stats-http /etc/nginx/sites-enabled/stats-http
+sudo rm -rf /var/www/stats

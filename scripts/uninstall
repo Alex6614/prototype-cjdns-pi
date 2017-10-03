@@ -32,6 +32,7 @@ source "$BASE_DIR/prometheus-node-exporter/uninstall"
 source "$BASE_DIR/prometheus-server/uninstall"
 source "$BASE_DIR/grafana/uninstall"
 source "$BASE_DIR/extra-tools/uninstall"
+source "$BASE_DIR/web/uninstall"
 
 sudo systemctl daemon-reload
 

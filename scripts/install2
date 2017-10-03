@@ -188,6 +188,18 @@ if [ -z "$WITH_EXTRA_TOOLS" -o "$WITH_EXTRA_TOOLS" != "true" -a "$WITH_EXTRA_TOO
     fi
 fi
 
+if [ -z "$WITH_WEB_STATS" -o "$WITH_WEB_STATS" != "true" -a "$WITH_WEB_STATS" != "false" ]; then
+    read -p "Install Mesh Stats on port 81 (Y/n)? " -n 1 -r
+    echo ""
+    if [[ $REPLY =~ ^[Nn]$ ]]; then
+        echo -e "\e[1;31mWeb Stats  will be skipped\e[0m"
+        WITH_WEB_STATS=false
+    else
+        echo -e "\e[1;32mWeb Stats will be installed\e[0m"
+        WITH_WEB_STATS=true
+    fi
+fi
+
 # Prompt for name of the mesh network
 read -p "Enter the name of your mesh network (default: tomesh): " -r
 export MESH_NAME=`echo $REPLY | sed 's/ //g'`
@@ -289,6 +301,12 @@ fi
 if [ ! -z "$WITH_EXTRA_TOOLS" -a "$WITH_EXTRA_TOOLS" == "true" ]; then
     source extra-tools/install
 fi
+
+# Web Stats
+if [ ! -z "$WITH_WEB_STATS" -a "$WITH_WEB_STATS" == "true" ]; then
+    source web/install
+fi
+
 
 # Install node status script
 sudo cp status /usr/local/bin/status
