@@ -61,6 +61,9 @@ foreach ($nodes as $node) {
   </tr>
   <?php } ?>
 </table>
+
+<div id="mynetwork"></div>
+
 <script type="text/javascript">
     // create an array with nodes
     var nodes = new vis.DataSet([
