@@ -3,5 +3,5 @@
 sudo apt-get install nginx php7.0-common php7.0-cli php7.0-fpm -y
 sudo cp "$BASE_DIR/stats-http.nginx" /etc/nginx/sites-available/stats-http
 sudo ln -s /etc/nginx/sites-available/stats-http /etc/nginx/sites-enabled/stats-http
-sudo mkdir var/www/stats
+sudo mkdir /var/www/stats
 sudo cp "$BASE_DIR/index.php" "/var/www/stats/index.php"
