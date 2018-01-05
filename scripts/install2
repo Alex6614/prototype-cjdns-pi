@@ -341,7 +341,7 @@ echo -e "Run \\e[1;32mstatus\\e[0m anytime to print the status of your node"
 
 # Print node status on login
 cp ~/.profile ~/.bash_profile
-echo < "EOF" >> ~/.bash_profile
+cat < "EOF" >> ~/.bash_profile
 # export mesh network name
 export MESH_NAME=$MESH_NAME
 
