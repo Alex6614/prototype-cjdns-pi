@@ -226,7 +226,7 @@ fi
 
 # Prompt for name of the mesh network
 read -p "Enter the name of your mesh network (default: tomesh): " -r
-export MESH_NAME="$(echo $REPLY | sed 's/ //g')"
+export MESH_NAME="${REPLY// /}"
 if [ "${#MESH_NAME}" == 0 ]; then
     export MESH_NAME="tomesh"
 fi
@@ -234,7 +234,7 @@ fi
 # Get tools
 if ! [ "$(which nodejs)" ]; then
     # Check for armv6 and install nodejs manually instead since it will not install via repo
-    if $(uname -m | grep -Eq ^armv6); then
+    if uname -m | grep -Eq ^armv6; then
         wget -O /tmp/node-v6.11.0-linux-armv6l.tar.gz https://nodejs.org/dist/v6.11.0/node-v6.11.0-linux-armv6l.tar.gz
         sudo tar xfz /tmp/node-v6.11.0-linux-armv6l.tar.gz --strip 1 -C /
         rm -rf /tmp/node-v6.11.0-linux-armv6l.tar.gz
@@ -341,7 +341,7 @@ echo -e "Run \\e[1;32mstatus\\e[0m anytime to print the status of your node"
 
 # Print node status on login
 cp ~/.profile ~/.bash_profile
-cat < "EOF" >> ~/.bash_profile
+cat << "EOF" >> ~/.bash_profile
 # export mesh network name
 export MESH_NAME=$MESH_NAME
 
