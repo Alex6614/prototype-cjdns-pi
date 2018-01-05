@@ -21,7 +21,7 @@ if [[ "$BOARD_HARDWARE" == 'Allwinner' || "$BOARD_HARDWARE" == 'Generic' ]]; the
     BOARD_REVISION="experimental"
     if [[ "$BOARD_NAME" == "Zero" ]]; then
         # AP is supported if board already supports XRadio
-        if [ "$(lsmod | grep xradio_wlan)" ]; then 
+        if lsmod | grep xradio_wlan ; then 
             SUPPORT_HOSTAP=true
         fi
     fi
@@ -62,7 +62,7 @@ sudo touch /etc/udev/rules.d/80-net-setup-link.rules
 
 # Disable NetworkManager management of wlan1 so it doesn't pause it to scan every 60 seconds
 if [[ -e '/etc/NetworkManager/NetworkManager.conf' ]]; then
-    if [[ -z "$(grep "\[keyfile\]" /etc/NetworkManager/NetworkManager.conf)" ]]; then
+    if grep "\\[keyfile\\]" /etc/NetworkManager/NetworkManager.conf ; then
         echo "[keyfile]" | sudo tee --append /etc/NetworkManager/NetworkManager.conf > /dev/null
         echo "unmanaged-devices=interface-name:wlan1" | sudo tee --append /etc/NetworkManager/NetworkManager.conf > /dev/null
     fi
@@ -71,8 +71,8 @@ if [[ -e '/etc/NetworkManager/NetworkManager.conf' ]]; then
 # Set configurations specific to the board
 if [[ $BOARD_FAMILY == "Orange Pi" ]]; then
     # Downgrade kernel to enable XRadio in version 4.10 on Orange Pi Zero
-    if ! [ -z "$(uname -a | grep 4.11)" ]; then 
-        if ! [ -z "$(grep SDIO_ID /sys/bus/mmc/devices/mmc1:0001/mmc1:0001:1/uevent| grep 0020:2281)" ]; then
+    if uname -a | grep 4.11; then 
+        if grep SDIO_ID /sys/bus/mmc/devices/mmc1:0001/mmc1:0001:1/uevent | grep 0020:2281; then
             read -p "Downgrade kernel to enable XRadio on Orange Pi Zero (Y/n)? " -n 1 -r
             echo ""
             if ! [[ $REPLY =~ ^[Nn]$ ]]; then
@@ -206,7 +206,7 @@ if [ -z "$WITH_FAKE_HWCLOCK" ] || [ "$WITH_FAKE_HWCLOCK" != "true" ] && [ "$WITH
     echo ""
     if [[ $REPLY =~ ^[Nn]$ ]]; then
         echo -e "\\e[1;31mFake Hardware Clock will be skipped\\e[0m"
-        WITH_FAKE_HWCLOCK_=false
+        WITH_FAKE_HWCLOCK=false
     else
         echo -e "\\e[1;32mFake Hardware Clock will be configured\\e[0m"
         WITH_FAKE_HWCLOCK=true
